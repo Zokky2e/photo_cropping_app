@@ -80,6 +80,7 @@ class BottomBar extends ConsumerWidget {
                   SnackBar(
                     content: Text(
                       '$saved image${saved == 1 ? '' : 's'} saved to ${state.outputFolder}',
+                      style: TextStyle(color: Colors.white),
                     ),
                     backgroundColor: const Color(0xFF1E2E1E),
                     behavior: SnackBarBehavior.floating,

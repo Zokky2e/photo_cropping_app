@@ -2,18 +2,41 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
+import 'package:my_desktop_app/providers/settings_provider.dart';
+import '../models/settings_model.dart';
+import '../models/process_result_model.dart';
 
 class ImageProcessorService {
-  Future<_ProcessResult> processImage(String sourcePath) async {
-    return await Isolate.run(() => _processInIsolate(sourcePath));
+  Future<ProcessResult> processImage(
+    String sourcePath,
+    ProcessingSettings settings,
+  ) async {
+    final originalBytes = await File(sourcePath).readAsBytes();
+    return _runInIsolate(originalBytes, settings);
   }
 
-  static _ProcessResult _processInIsolate(String sourcePath) {
-    final bytes = File(sourcePath).readAsBytesSync();
-    final original = img.decodeImage(bytes);
+  Future<ProcessResult> reprocessImage(
+    Uint8List originalBytes,
+    ProcessingSettings settings,
+  ) async {
+    return _runInIsolate(originalBytes, settings);
+  }
+
+  Future<ProcessResult> _runInIsolate(
+    Uint8List originalBytes,
+    ProcessingSettings settings,
+  ) async {
+    return await Isolate.run(() => _processInIsolate(originalBytes, settings));
+  }
+
+  static ProcessResult _processInIsolate(
+    Uint8List originalBytes,
+    ProcessingSettings settings,
+  ) {
+    final original = img.decodeImage(originalBytes);
 
     if (original == null) {
-      throw Exception('Could not decode image: $sourcePath');
+      throw Exception('Could not decode image');
     }
 
     final originalWidth = original.width;
@@ -24,8 +47,8 @@ class ImageProcessorService {
         ? img.copyRotate(original, angle: 90)
         : original;
 
-    final int paddingWidth = (working.height * 1 / 2).round();
-    final int paddingHeight = (working.width * 2 / 3).round();
+    final int paddingWidth = (working.height * settings.widthPadding).round();
+    final int paddingHeight = (working.width * settings.heightPadding).round();
 
     final int canvasWidth = working.width + paddingWidth;
     final int canvasHeight = working.height + paddingHeight;
@@ -39,9 +62,12 @@ class ImageProcessorService {
     img.fill(canvas, color: img.ColorRgb8(255, 255, 255));
     img.compositeImage(canvas, working, dstX: 0, dstY: 0);
 
-    final outputBytes = Uint8List.fromList(img.encodeJpg(canvas, quality: 95));
+    final outputBytes = Uint8List.fromList(
+      img.encodeJpg(canvas, quality: settings.outputQuality),
+    );
 
-    return _ProcessResult(
+    return ProcessResult(
+      originalBytes: originalBytes,
       bytes: outputBytes,
       originalWidth: originalWidth,
       originalHeight: originalHeight,
@@ -49,20 +75,4 @@ class ImageProcessorService {
       paddedHeight: canvasHeight,
     );
   }
-}
-
-class _ProcessResult {
-  final Uint8List bytes;
-  final int originalWidth;
-  final int originalHeight;
-  final int paddedWidth;
-  final int paddedHeight;
-
-  _ProcessResult({
-    required this.bytes,
-    required this.originalWidth,
-    required this.originalHeight,
-    required this.paddedWidth,
-    required this.paddedHeight,
-  });
 }

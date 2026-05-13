@@ -1,13 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_desktop_app/screens/settings_screen.dart';
+import 'package:my_desktop_app/services/settings_window_manager.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'package:flutter/services.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'screens/home_screen.dart';
 
-void main() async {
+Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  // CHILD WINDOW
+  if (args.isNotEmpty && args.first == 'multi_window') {
+    final arguments = jsonDecode(args[2]);
 
+    if (arguments['window'] == 'settings') {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      runApp(
+        ProviderScope(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              scaffoldBackgroundColor: Colors.transparent,
+              canvasColor: Colors.transparent,
+            ),
+            home: const SettingsWindowPage(),
+          ),
+        ),
+      );
+    }
+
+    return;
+  }
+
+  await windowManager.ensureInitialized();
   const windowOptions = WindowOptions(
     size: Size(1100, 720),
     minimumSize: Size(800, 560),

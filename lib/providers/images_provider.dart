@@ -1,9 +1,13 @@
 import 'dart:io';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_desktop_app/providers/settings_provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../models/image_item.dart';
+import '../models/settings_model.dart';
+import '../models/process_result_model.dart';
 import '../services/image_processor_service.dart';
 
 // ---------------------------------------------------------------------------
@@ -14,22 +18,26 @@ class ImagesState {
   final List<ImageItem> images;
   final String? outputFolder;
   final bool isSaving;
+  final bool isReprocessing;
 
   const ImagesState({
     this.images = const [],
     this.outputFolder,
     this.isSaving = false,
+    this.isReprocessing = false,
   });
 
   ImagesState copyWith({
     List<ImageItem>? images,
     String? outputFolder,
     bool? isSaving,
+    bool? isReprocessing,
   }) {
     return ImagesState(
       images: images ?? this.images,
       outputFolder: outputFolder ?? this.outputFolder,
       isSaving: isSaving ?? this.isSaving,
+      isReprocessing: isReprocessing ?? this.isReprocessing,
     );
   }
 
@@ -49,8 +57,29 @@ class ImagesState {
 
 class ImagesNotifier extends StateNotifier<ImagesState> {
   final _processor = ImageProcessorService();
+  final Ref _ref;
 
-  ImagesNotifier() : super(const ImagesState());
+  ImagesNotifier(this._ref) : super(const ImagesState()) {
+    print("created images notifier");
+    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+      if (call.method == 'settings_updated') {
+        final data = call.arguments;
+
+        _ref
+            .read(settingsProvider.notifier)
+            .updateSettings(
+              heightPadding: data['heightPadding'],
+              widthPadding: data['widthPadding'],
+              outputQuality: data['outputQuality'],
+              processedPrefix: data['processedPrefix'],
+            );
+
+        await reprocessAll();
+      }
+
+      return null;
+    });
+  }
 
   static const _supportedExtensions = {
     '.jpg',
@@ -64,6 +93,8 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
   bool _isImage(String path) =>
       _supportedExtensions.contains(p.extension(path).toLowerCase());
+
+  ProcessingSettings get _settings => _ref.read(settingsProvider);
 
   // ── Add images from drop or file picker ──────────────────────────────────
 
@@ -82,7 +113,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
     // Auto-process newly added images
     for (final item in newItems) {
-      _processOne(item.sourcePath);
+      _processOne(item.sourcePath, null);
     }
   }
 
@@ -98,18 +129,25 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
   // ── Process ──────────────────────────────────────────────────────────────
 
-  Future<void> _processOne(String sourcePath) async {
+  Future<void> _processOne(String sourcePath, dynamic existingBytes) async {
     _updateItem(
       sourcePath,
       (item) => item.copyWith(status: ProcessStatus.processing),
     );
 
     try {
-      final result = await _processor.processImage(sourcePath);
+      final settings = _settings;
+      final ProcessResult result;
+      if (existingBytes != null) {
+        result = await _processor.reprocessImage(existingBytes, settings);
+      } else {
+        result = await _processor.processImage(sourcePath, settings);
+      }
       _updateItem(
         sourcePath,
         (item) => item.copyWith(
           status: ProcessStatus.done,
+          originalBytes: result.originalBytes,
           processedBytes: result.bytes,
           originalWidth: result.originalWidth,
           originalHeight: result.originalHeight,
@@ -128,7 +166,21 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
     }
   }
 
-  void retryImage(String sourcePath) => _processOne(sourcePath);
+  void retryImage(String sourcePath) {
+    final item = state.images.firstWhere((i) => i.sourcePath == sourcePath);
+    _processOne(sourcePath, item.originalBytes);
+  }
+
+  Future<void> reprocessAll() async {
+    if (state.images.isEmpty) return;
+    state = state.copyWith(isReprocessing: true);
+    await Future.wait(
+      state.images.map(
+        (item) => _processOne(item.sourcePath, item.originalBytes),
+      ),
+    );
+    state = state.copyWith(isReprocessing: false);
+  }
 
   void _updateItem(String sourcePath, ImageItem Function(ImageItem) update) {
     state = state.copyWith(
@@ -164,7 +216,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
       final outPath = p.join(
         state.outputFolder!,
-        'wallet_${item.fileName.replaceAll(RegExp(r'\.(jpg|jpeg|png|bmp|webp|tiff|tif)$', caseSensitive: false), '.jpg')}',
+        '${_settings.processedPrefix}_${item.fileName.replaceAll(RegExp(r'\.(jpg|jpeg|png|bmp|webp|tiff|tif)$', caseSensitive: false), '.jpg')}',
       );
 
       await File(outPath).writeAsBytes(item.processedBytes!);
@@ -183,22 +235,6 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 final imagesProvider = StateNotifierProvider<ImagesNotifier, ImagesState>((
   ref,
 ) {
-  return ImagesNotifier();
+  final notifier = ImagesNotifier(ref);
+  return notifier;
 });
-
-// Expose the processor result type publicly for widgets
-class ProcessResult {
-  final List<int> bytes;
-  final int originalWidth;
-  final int originalHeight;
-  final int paddedWidth;
-  final int paddedHeight;
-
-  ProcessResult({
-    required this.bytes,
-    required this.originalWidth,
-    required this.originalHeight,
-    required this.paddedWidth,
-    required this.paddedHeight,
-  });
-}
