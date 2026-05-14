@@ -43,7 +43,7 @@ Future<void> main(List<String> args) async {
     center: true,
     title: 'Wallet Padder',
     backgroundColor: Color(0xFF0E0E16),
-    titleBarStyle: TitleBarStyle.normal,
+    titleBarStyle: TitleBarStyle.hidden,
   );
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
