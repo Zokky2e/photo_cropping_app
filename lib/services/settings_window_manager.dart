@@ -3,57 +3,37 @@ import 'dart:ui';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
 
 class SettingsWindow {
   static WindowController? _controller;
 
-  static const _xKey = 'settings_x';
-  static const _yKey = 'settings_y';
-  static const _wKey = 'settings_w';
-  static const _hKey = 'settings_h';
+  static const xKey = 'settings_x';
+  static const yKey = 'settings_y';
+  static const wKey = 'settings_w';
+  static const hKey = 'settings_h';
 
   static Future<bool> _isAlive() async {
-    if (_controller == null) return false;
-
-    try {
-      // any lightweight call works
-      await _controller!.setTitle('ping');
-      return true;
-    } catch (_) {
-      _controller = null;
-      return false;
-    }
+    return _controller != null;
   }
 
   static Future<void> toggle() async {
     if (await _isAlive()) {
       try {
-        await _controller!.close();
-      } catch (e) {
-        // Window was closed externally → cleanup stale controller
-      }
+        await windowManager.close();
+      } catch (_) {}
       _controller = null;
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-
-    final x = prefs.getDouble(_xKey) ?? 300;
-    final y = prefs.getDouble(_yKey) ?? 200;
-    final w = prefs.getDouble(_wKey) ?? 500;
-    final h = prefs.getDouble(_hKey) ?? 700;
-
-    final window = await DesktopMultiWindow.createWindow(
-      jsonEncode({'window': 'settings'}),
+    final controller = await WindowController.create(
+      WindowConfiguration(arguments: jsonEncode({'window': 'settings'})),
     );
 
-    _controller = window;
+    _controller = controller;
 
-    await window.setFrame(Offset(x, y) & Size(w, h));
-
-    await window.setTitle('Settings');
-
-    await window.show();
+    // SHOW WINDOW
+    await controller.show();
   }
 
   static void clearReference() {

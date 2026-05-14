@@ -1,18 +1,19 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../providers/settings_provider.dart';
-import '../providers/images_provider.dart';
-import '../services/settings_window_manager.dart';
+import 'package:my_desktop_app/providers/images_provider.dart';
+import 'package:my_desktop_app/providers/settings_provider.dart';
+import 'package:my_desktop_app/services/settings_window_manager.dart';
 
 class MethodChannelHandler {
-  static void init(WidgetRef ref) {
-    print("method channel handler initialized");
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+  static void init(ProviderContainer container) {
+    final channel = WindowMethodChannel('settings_channel');
+
+    channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'settings_updated':
           final data = call.arguments;
-          ref
+
+          container
               .read(settingsProvider.notifier)
               .updateSettings(
                 heightPadding: data['heightPadding'],
@@ -20,10 +21,13 @@ class MethodChannelHandler {
                 outputQuality: data['outputQuality'],
                 processedPrefix: data['processedPrefix'],
               );
-          await ref.read(imagesProvider.notifier).reprocessAll();
+
+          await container.read(imagesProvider.notifier).reprocessAll();
+          break;
 
         case 'settings_closed':
           SettingsWindow.clearReference();
+          break;
       }
 
       return null;

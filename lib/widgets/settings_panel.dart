@@ -66,7 +66,9 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
 
   Future<void> _save() async {
     print("saving...");
-    await DesktopMultiWindow.invokeMethod(0, 'settings_updated', {
+    const channel = WindowMethodChannel('settings_channel');
+
+    await channel.invokeMethod('settings_updated', {
       'heightPadding': _heightPadding,
       'widthPadding': _widthPadding,
       'outputQuality': _outputQuality,
@@ -99,11 +101,9 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
                 // ── Title bar (drag handle) ─────────────────────────────
                 _TitleBar(
                   onClose: () async {
-                    await DesktopMultiWindow.invokeMethod(
-                      0,
-                      "settings_closed",
-                      null,
-                    );
+                    const channel = WindowMethodChannel('settings_channel');
+
+                    await channel.invokeMethod('settings_closed');
                   },
                   onDrag: (details) {
                     settingsPanelController.moveTo(

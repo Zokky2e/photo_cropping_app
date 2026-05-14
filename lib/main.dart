@@ -7,28 +7,44 @@ import 'package:my_desktop_app/providers/settings_provider.dart';
 import 'package:my_desktop_app/screens/settings_screen.dart';
 import 'package:my_desktop_app/services/method_channel_handler.dart';
 import 'package:my_desktop_app/services/settings_window_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'screens/home_screen.dart';
 
+late final ProviderContainer container;
+
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  container = ProviderContainer();
+  MethodChannelHandler.init(container); // <- must exist here
+  final windowController = await WindowController.fromCurrentEngine();
+  final arguments = windowController.arguments;
   // CHILD WINDOW
-  if (args.isNotEmpty && args.first == 'multi_window') {
-    final arguments = jsonDecode(args[2]);
+  if (args.isNotEmpty) {
+    final decodedArgs = jsonDecode(arguments);
 
-    if (arguments['window'] == 'settings') {
-      WidgetsFlutterBinding.ensureInitialized();
-
+    if (decodedArgs['window'] == 'settings') {
+      await windowManager.ensureInitialized();
       windowManager.waitUntilReadyToShow(
         const WindowOptions(
           titleBarStyle: TitleBarStyle.hidden,
           backgroundColor: Colors.transparent,
         ),
         () async {
+          final prefs = await SharedPreferences.getInstance();
+
+          final x = prefs.getDouble(SettingsWindow.xKey) ?? 300;
+          final y = prefs.getDouble(SettingsWindow.yKey) ?? 200;
+          final w = prefs.getDouble(SettingsWindow.wKey) ?? 500;
+          final h = prefs.getDouble(SettingsWindow.hKey) ?? 700;
+          await windowManager.setPosition(Offset(x, y));
+          await windowManager.setSize(Size(w, h));
+          await windowManager.setTitle("Settings");
           await windowManager.show();
+          await windowManager.focus();
         },
       );
 
@@ -64,7 +80,12 @@ Future<void> main(List<String> args) async {
     await windowManager.focus();
   });
 
-  runApp(const ProviderScope(child: WalletPadderApp()));
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const WalletPadderApp(),
+    ),
+  );
 }
 
 class WalletPadderApp extends ConsumerStatefulWidget {
@@ -78,7 +99,6 @@ class _WalletPadderAppState extends ConsumerState<WalletPadderApp> {
   @override
   void initState() {
     super.initState();
-    MethodChannelHandler.init(ref);
   }
 
   @override

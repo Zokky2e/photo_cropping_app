@@ -26,11 +26,11 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
-  DesktopMultiWindowSetWindowCreatedCallback([](void* controller) {
-    auto* flutter_view_controller =
-        reinterpret_cast<flutter::FlutterViewController*>(controller);
-    auto* registry = flutter_view_controller->engine();
-    RegisterPlugins(registry);  // registers ALL plugins (incl. window_manager) for every child window
+  DesktopMultiWindowSetWindowCreatedCallback([](void *controller) {
+    auto *flutter_view_controller =
+      reinterpret_cast<flutter::FlutterViewController *>(controller);
+    auto *registry = flutter_view_controller->engine();
+    RegisterPlugins(registry);
   });
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
