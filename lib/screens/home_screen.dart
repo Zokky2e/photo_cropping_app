@@ -16,13 +16,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
-      if (call.method == 'settings_closed') {
-        SettingsWindow.clearReference();
-      }
-
-      return null;
-    });
     final state = ref.watch(imagesProvider);
     final notifier = ref.read(imagesProvider.notifier);
 

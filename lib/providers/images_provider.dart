@@ -61,24 +61,6 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
   ImagesNotifier(this._ref) : super(const ImagesState()) {
     print("created images notifier");
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
-      if (call.method == 'settings_updated') {
-        final data = call.arguments;
-
-        _ref
-            .read(settingsProvider.notifier)
-            .updateSettings(
-              heightPadding: data['heightPadding'],
-              widthPadding: data['widthPadding'],
-              outputQuality: data['outputQuality'],
-              processedPrefix: data['processedPrefix'],
-            );
-
-        await reprocessAll();
-      }
-
-      return null;
-    });
   }
 
   static const _supportedExtensions = {
