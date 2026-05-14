@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_desktop_app/providers/images_provider.dart';
+import 'package:my_desktop_app/providers/settings_provider.dart';
 import 'package:my_desktop_app/screens/settings_screen.dart';
 import 'package:my_desktop_app/services/method_channel_handler.dart';
 import 'package:my_desktop_app/services/settings_window_manager.dart';
@@ -19,8 +21,6 @@ Future<void> main(List<String> args) async {
 
     if (arguments['window'] == 'settings') {
       WidgetsFlutterBinding.ensureInitialized();
-
-      await windowManager.ensureInitialized();
 
       windowManager.waitUntilReadyToShow(
         const WindowOptions(

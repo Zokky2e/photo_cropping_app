@@ -7,6 +7,7 @@ import '../services/settings_window_manager.dart';
 
 class MethodChannelHandler {
   static void init(WidgetRef ref) {
+    print("method channel handler initialized");
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
       switch (call.method) {
         case 'settings_updated':
