@@ -85,123 +85,123 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
       },
       child: Material(
         elevation: 16,
-        borderRadius: BorderRadius.circular(14),
         color: const Color(0xFF1A1A28),
-        child: Container(
-          width: 320,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF2E2E4E), width: 1),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Title bar (drag handle) ─────────────────────────────
-              _TitleBar(
-                onClose: () async {
-                  await DesktopMultiWindow.invokeMethod(
-                    0,
-                    "settings_closed",
-                    null,
-                  );
-                },
-                onDrag: (details) {
-                  settingsPanelController.moveTo(
-                    settingsPanelController.position + details.delta,
-                  );
-                },
-              ),
-
-              // ── Settings body ───────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Height Padding
-                    _SectionLabel('Height Padding'),
-                    const SizedBox(height: 4),
-                    _SliderRow(
-                      label: 'Amount',
-                      value: _heightPadding,
-                      min: 0.01,
-                      max: 0.99,
-                      displayValue: '$_heightPadding',
-                      onChanged: (v) => setState(() => _heightPadding = v),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Width Padding
-                    _SectionLabel('Width Padding'),
-                    const SizedBox(height: 4),
-                    _SliderRow(
-                      label: 'Amount',
-                      value: _widthPadding,
-                      min: 0.01,
-                      max: 0.99,
-                      displayValue: '$_widthPadding',
-                      onChanged: (v) => setState(() => _widthPadding = v),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Quality
-                    _SectionLabel('Output quality'),
-                    const SizedBox(height: 4),
-                    _SliderRow(
-                      label: 'JPEG quality',
-                      value: _outputQuality.toDouble(),
-                      min: 50,
-                      max: 100,
-                      displayValue: '$_outputQuality',
-                      onChanged: (v) =>
-                          setState(() => _outputQuality = v.round()),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Processed Prefix
-                    _SectionLabel('Image name prefix'),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _processedPrefixController,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "Saved Image Prefix",
-                      ),
-                      onChanged: (v) => setState(() => _processedPrefix = v),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Save button
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: _save,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B9FFF),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Save settings',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+        child: SizedBox.expand(
+          child: Container(
+            width: 320,
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFF2E2E4E), width: 1),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Title bar (drag handle) ─────────────────────────────
+                _TitleBar(
+                  onClose: () async {
+                    await DesktopMultiWindow.invokeMethod(
+                      0,
+                      "settings_closed",
+                      null,
+                    );
+                  },
+                  onDrag: (details) {
+                    settingsPanelController.moveTo(
+                      settingsPanelController.position + details.delta,
+                    );
+                  },
                 ),
-              ),
-            ],
+
+                // ── Settings body ───────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Height Padding
+                      _SectionLabel('Height Padding'),
+                      const SizedBox(height: 4),
+                      _SliderRow(
+                        label: 'Amount',
+                        value: _heightPadding,
+                        min: 0.01,
+                        max: 0.99,
+                        displayValue: '$_heightPadding',
+                        onChanged: (v) => setState(() => _heightPadding = v),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Width Padding
+                      _SectionLabel('Width Padding'),
+                      const SizedBox(height: 4),
+                      _SliderRow(
+                        label: 'Amount',
+                        value: _widthPadding,
+                        min: 0.01,
+                        max: 0.99,
+                        displayValue: '$_widthPadding',
+                        onChanged: (v) => setState(() => _widthPadding = v),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Quality
+                      _SectionLabel('Output quality'),
+                      const SizedBox(height: 4),
+                      _SliderRow(
+                        label: 'JPEG quality',
+                        value: _outputQuality.toDouble(),
+                        min: 50,
+                        max: 100,
+                        displayValue: '$_outputQuality',
+                        onChanged: (v) =>
+                            setState(() => _outputQuality = v.round()),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Processed Prefix
+                      _SectionLabel('Image name prefix'),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: _processedPrefixController,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Saved Image Prefix",
+                        ),
+                        onChanged: (v) => setState(() => _processedPrefix = v),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Save button
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: _save,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF6B9FFF),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Save settings',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -222,40 +222,41 @@ class _TitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanUpdate: onDrag,
-      child: Container(
-        height: 44,
-        decoration: const BoxDecoration(
-          color: Color(0xFF13131C),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-          border: Border(bottom: BorderSide(color: Color(0xFF2E2E4E))),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.settings_outlined,
-              size: 15,
-              color: Color(0xFF6B9FFF),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Processing settings',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+      child: DragToMoveArea(
+        child: Container(
+          height: 44,
+          decoration: const BoxDecoration(
+            color: Color(0xFF13131C),
+            border: Border(bottom: BorderSide(color: Color(0xFF2E2E4E))),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.settings_outlined,
+                size: 15,
+                color: Color(0xFF6B9FFF),
               ),
-            ),
-            const Spacer(),
-            GestureDetector(
-              onTap: onClose,
-              child: const Icon(
-                Icons.close,
-                size: 16,
-                color: Color(0xFF666677),
+              const SizedBox(width: 8),
+              const Text(
+                'Processing settings',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+              const Spacer(),
+              GestureDetector(
+                onTap: onClose,
+                child: const Icon(
+                  Icons.close,
+                  size: 16,
+                  color: Color(0xFF666677),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

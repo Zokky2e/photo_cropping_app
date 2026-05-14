@@ -19,6 +19,18 @@ Future<void> main(List<String> args) async {
     if (arguments['window'] == 'settings') {
       WidgetsFlutterBinding.ensureInitialized();
 
+      await windowManager.ensureInitialized();
+
+      windowManager.waitUntilReadyToShow(
+        const WindowOptions(
+          titleBarStyle: TitleBarStyle.hidden,
+          backgroundColor: Colors.transparent,
+        ),
+        () async {
+          await windowManager.show();
+        },
+      );
+
       runApp(
         ProviderScope(
           child: MaterialApp(
