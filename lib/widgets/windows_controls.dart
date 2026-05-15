@@ -56,25 +56,19 @@ class _WinButton extends StatefulWidget {
 }
 
 class _WinButtonState extends State<_WinButton> {
-  bool _hovered = false;
-
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          width: 14,
-          height: 14,
+          width: 20,
+          height: 20,
           decoration: BoxDecoration(
             color: widget.color,
             shape: BoxShape.circle,
           ),
-          child: _hovered
-              ? Icon(widget.icon, size: 10, color: Colors.black54)
-              : null,
+          child: Icon(widget.icon, size: 12, color: Colors.black54),
         ),
       ),
     );

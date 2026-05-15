@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:my_desktop_app/main.dart' show version;
 import 'package:my_desktop_app/services/settings_window_manager.dart';
 import 'package:my_desktop_app/widgets/windows_controls.dart';
 import 'package:window_manager/window_manager.dart';
@@ -42,16 +43,19 @@ class TopBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 8, right: 12),
+              padding: const EdgeInsets.only(left: 12, top: 8, right: 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [WindowControls()],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(version, style: TextStyle(fontSize: 8)),
+                  WindowControls(),
+                ],
               ),
             ),
             SizedBox(
               height: 52,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   children: [
                     const Icon(
@@ -101,16 +105,19 @@ class TopBar extends StatelessWidget {
                         textStyle: const TextStyle(fontSize: 13),
                       ),
                     ),
-                    IconButton(
+                    const SizedBox(width: 6),
+                    OutlinedButton.icon(
                       onPressed: _openSettings,
                       icon: const Icon(Icons.settings, size: 16),
-                      style: IconButton.styleFrom(
+                      label: const Text('Settings'),
+                      style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFFCCCCDD),
                         side: const BorderSide(color: Color(0xFF3E3E5E)),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 8,
                         ),
+                        textStyle: const TextStyle(fontSize: 13),
                       ),
                     ),
                   ],

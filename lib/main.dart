@@ -15,6 +15,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'screens/home_screen.dart';
 
 late final ProviderContainer container;
+const String version = "v1.0.1";
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
