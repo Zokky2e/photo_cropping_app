@@ -30,7 +30,8 @@ final settingsPanelController = SettingsPanelController();
 // ---------------------------------------------------------------------------
 
 class SettingsPanel extends ConsumerStatefulWidget {
-  const SettingsPanel();
+  final String mainWindowId;
+  const SettingsPanel({super.key, required this.mainWindowId});
 
   @override
   ConsumerState<SettingsPanel> createState() => SettingsPanelState();
@@ -52,17 +53,7 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
     super.initState();
     _loadFromSettings(ref.read(settingsProvider));
     _processedPrefixController.text = _processedPrefix;
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    mainWindow = await _getMainWindow();
-    setState(() {});
-  }
-
-  Future<WindowController> _getMainWindow() async {
-    final windows = await WindowController.getAll();
-    return WindowController.fromWindowId((windows.first.windowId));
+    mainWindow = WindowController.fromWindowId((widget.mainWindowId));
   }
 
   @override
