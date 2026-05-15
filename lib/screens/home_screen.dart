@@ -27,7 +27,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _registerChannelHandler() {
-    final channel = WindowMethodChannel('settings_channel');
+    final channel = WindowMethodChannel(
+      'settings_channel',
+      mode: ChannelMode.unidirectional,
+    );
     print("creating method handler");
     channel.setMethodCallHandler((call) async {
       print(call.method);

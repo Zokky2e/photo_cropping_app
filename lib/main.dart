@@ -15,18 +15,11 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'screens/home_screen.dart';
 
 late final ProviderContainer container;
-bool isMainWindowCreated = false;
 
 Future<void> main(List<String> args) async {
-  String mainWindowId = "";
   WidgetsFlutterBinding.ensureInitialized();
   container = ProviderContainer();
   final windowController = await WindowController.fromCurrentEngine();
-  if (!isMainWindowCreated) {
-    isMainWindowCreated = true;
-    mainWindowId = windowController.windowId;
-    print(mainWindowId);
-  }
   final arguments = windowController.arguments;
   // CHILD WINDOW
   if (args.isNotEmpty) {
@@ -60,7 +53,7 @@ Future<void> main(List<String> args) async {
               scaffoldBackgroundColor: Colors.transparent,
               canvasColor: Colors.transparent,
             ),
-            home: SettingsWindowPage(mainWindowId: mainWindowId),
+            home: SettingsWindowPage(),
           ),
         ),
       );

@@ -6,8 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
 class SettingsWindowPage extends StatefulWidget {
-  final String mainWindowId;
-  const SettingsWindowPage({super.key, required this.mainWindowId});
+  const SettingsWindowPage({super.key});
 
   @override
   State<SettingsWindowPage> createState() => _SettingsWindowPageState();
@@ -50,9 +49,7 @@ class _SettingsWindowPageState extends State<SettingsWindowPage>
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: SafeArea(
-        child: Center(child: SettingsPanel(mainWindowId: widget.mainWindowId)),
-      ),
+      child: SafeArea(child: Center(child: SettingsPanel())),
     );
   }
 }
