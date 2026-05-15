@@ -44,6 +44,7 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
   late int _outputQuality;
   late String _processedPrefix;
   final _processedPrefixController = TextEditingController();
+  late WindowController mainWindow;
 
   @override
   void initState() {
@@ -51,6 +52,17 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
     super.initState();
     _loadFromSettings(ref.read(settingsProvider));
     _processedPrefixController.text = _processedPrefix;
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    mainWindow = await _getMainWindow();
+    setState(() {});
+  }
+
+  Future<WindowController> _getMainWindow() async {
+    final windows = await WindowController.getAll();
+    return WindowController.fromWindowId((windows.first.windowId));
   }
 
   @override
@@ -68,9 +80,7 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
 
   Future<void> _save() async {
     print("saving...");
-    var channel = WindowMethodChannel('settings_channel');
-
-    await channel.invokeMethod('settings_updated', {
+    await mainWindow.invokeMethod('settings_updated', {
       'heightPadding': _heightPadding,
       'widthPadding': _widthPadding,
       'outputQuality': _outputQuality,
@@ -113,9 +123,7 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
                 _TitleBar(
                   onClose: () async {
                     await _savePosition();
-                    var controller = WindowMethodChannel("settings_channel");
-                    print(controller.name);
-                    controller.invokeMethod('settings_hide');
+                    mainWindow.invokeMethod('settings_hide');
                   },
                   onDrag: (details) {
                     settingsPanelController.moveTo(

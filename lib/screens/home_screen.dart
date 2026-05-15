@@ -12,13 +12,21 @@ import '../widgets/drop_zone.dart';
 import '../widgets/empty_drop_area.dart';
 import '../widgets/image_card.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(imagesProvider);
-    final notifier = ref.read(imagesProvider.notifier);
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _registerChannelHandler();
+  }
+
+  void _registerChannelHandler() {
     final channel = WindowMethodChannel('settings_channel');
     print("creating method handler");
     channel.setMethodCallHandler((call) async {
@@ -49,6 +57,13 @@ class HomeScreen extends ConsumerWidget {
 
       return null;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(imagesProvider);
+    final notifier = ref.read(imagesProvider.notifier);
+
     return Scaffold(
       backgroundColor: const Color(0xFF0E0E16),
       body: DropZone(
