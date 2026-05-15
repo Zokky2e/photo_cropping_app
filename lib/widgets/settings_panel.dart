@@ -257,12 +257,15 @@ class _TitleBar extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              GestureDetector(
-                onTap: onClose,
-                child: const Icon(
-                  Icons.close,
-                  size: 16,
-                  color: Color(0xFF666677),
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: onClose,
+                  child: const Icon(
+                    Icons.close,
+                    size: 16,
+                    color: Color(0xFF666677),
+                  ),
                 ),
               ),
             ],
