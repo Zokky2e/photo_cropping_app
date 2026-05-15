@@ -1,8 +1,13 @@
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 class WindowControls extends StatelessWidget {
   const WindowControls({super.key});
+
+  Future<void> _closeAll() async {
+    await windowManager.close();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class WindowControls extends StatelessWidget {
         _WinButton(
           color: const Color(0xFFFF5F57),
           icon: Icons.close,
-          onTap: () => windowManager.close(),
+          onTap: () => _closeAll(),
         ),
       ],
     );
