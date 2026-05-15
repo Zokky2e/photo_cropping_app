@@ -7,33 +7,45 @@ import 'package:window_manager/window_manager.dart';
 
 class SettingsWindow {
   static WindowController? _controller;
+  static bool _isVisible = false;
 
   static const xKey = 'settings_x';
   static const yKey = 'settings_y';
   static const wKey = 'settings_w';
   static const hKey = 'settings_h';
 
-  static Future<bool> _isAlive() async {
-    return _controller != null;
+  static Future<void> create() async {
+    final prefs = await SharedPreferences.getInstance();
+    final x = prefs.getDouble(xKey) ?? 300;
+    final y = prefs.getDouble(yKey) ?? 200;
+    final w = prefs.getDouble(wKey) ?? 500;
+    final h = prefs.getDouble(hKey) ?? 700;
+    final window = await WindowController.create(
+      WindowConfiguration(
+        hiddenAtLaunch: true,
+        arguments: jsonEncode({'window': 'settings'}),
+      ),
+    );
+
+    _controller = window;
+    _controller!.hide();
   }
 
   static Future<void> toggle() async {
-    if (await _isAlive()) {
-      try {
-        await windowManager.close();
-      } catch (_) {}
-      _controller = null;
-      return;
+    if (_controller == null) return;
+    if (_isVisible) {
+      await _controller!.hide();
+      _isVisible = false;
+    } else {
+      await _controller!.show();
+      _isVisible = true;
     }
+  }
 
-    final controller = await WindowController.create(
-      WindowConfiguration(arguments: jsonEncode({'window': 'settings'})),
-    );
-
-    _controller = controller;
-
-    // SHOW WINDOW
-    await controller.show();
+  static Future<void> hide() async {
+    if (_controller == null) return;
+    await _controller!.hide();
+    _isVisible = false;
   }
 
   static void clearReference() {

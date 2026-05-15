@@ -19,7 +19,6 @@ late final ProviderContainer container;
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   container = ProviderContainer();
-  MethodChannelHandler.init(container); // <- must exist here
   final windowController = await WindowController.fromCurrentEngine();
   final arguments = windowController.arguments;
   // CHILD WINDOW
@@ -43,8 +42,6 @@ Future<void> main(List<String> args) async {
           await windowManager.setPosition(Offset(x, y));
           await windowManager.setSize(Size(w, h));
           await windowManager.setTitle("Settings");
-          await windowManager.show();
-          await windowManager.focus();
         },
       );
 
@@ -80,6 +77,7 @@ Future<void> main(List<String> args) async {
     await windowManager.focus();
   });
 
+  SettingsWindow.create();
   runApp(
     UncontrolledProviderScope(
       container: container,
@@ -99,6 +97,7 @@ class _WalletPadderAppState extends ConsumerState<WalletPadderApp> {
   @override
   void initState() {
     super.initState();
+    //MethodChannelHandler.init(container);
   }
 
   @override

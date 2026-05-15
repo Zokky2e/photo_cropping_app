@@ -2,6 +2,8 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_desktop_app/services/settings_window_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../providers/settings_provider.dart';
@@ -66,7 +68,7 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
 
   Future<void> _save() async {
     print("saving...");
-    const channel = WindowMethodChannel('settings_channel');
+    var channel = WindowMethodChannel('settings_channel');
 
     await channel.invokeMethod('settings_updated', {
       'heightPadding': _heightPadding,
@@ -74,6 +76,15 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
       'outputQuality': _outputQuality,
       'processedPrefix': _processedPrefix,
     });
+  }
+
+  Future<void> _savePosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bounds = await windowManager.getBounds();
+    await prefs.setDouble(SettingsWindow.xKey, bounds.left);
+    await prefs.setDouble(SettingsWindow.yKey, bounds.top);
+    await prefs.setDouble(SettingsWindow.wKey, bounds.width);
+    await prefs.setDouble(SettingsWindow.hKey, bounds.height);
   }
 
   @override
@@ -101,9 +112,10 @@ class SettingsPanelState extends ConsumerState<SettingsPanel> {
                 // ── Title bar (drag handle) ─────────────────────────────
                 _TitleBar(
                   onClose: () async {
-                    const channel = WindowMethodChannel('settings_channel');
-
-                    await channel.invokeMethod('settings_closed');
+                    await _savePosition();
+                    var controller = WindowMethodChannel("settings_channel");
+                    print(controller.name);
+                    controller.invokeMethod('settings_hide');
                   },
                   onDrag: (details) {
                     settingsPanelController.moveTo(

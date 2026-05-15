@@ -2,6 +2,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_desktop_app/providers/settings_provider.dart';
 import 'package:my_desktop_app/services/settings_window_manager.dart';
 
 import '../providers/images_provider.dart';
@@ -18,7 +19,36 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(imagesProvider);
     final notifier = ref.read(imagesProvider.notifier);
+    final channel = WindowMethodChannel('settings_channel');
+    print("creating method handler");
+    channel.setMethodCallHandler((call) async {
+      print(call.method);
+      print(call.arguments);
+      switch (call.method) {
+        case 'settings_updated':
+          final data = call.arguments;
 
+          ref
+              .read(settingsProvider.notifier)
+              .updateSettings(
+                heightPadding: data['heightPadding'],
+                widthPadding: data['widthPadding'],
+                outputQuality: data['outputQuality'],
+                processedPrefix: data['processedPrefix'],
+              );
+
+          await ref.read(imagesProvider.notifier).reprocessAll();
+          break;
+        case 'settings_hide':
+          await SettingsWindow.hide();
+          break;
+        default:
+          print("unhandled_case");
+          break;
+      }
+
+      return null;
+    });
     return Scaffold(
       backgroundColor: const Color(0xFF0E0E16),
       body: DropZone(
