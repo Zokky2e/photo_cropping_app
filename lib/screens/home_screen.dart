@@ -2,10 +2,10 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_desktop_app/main.dart';
-import 'package:my_desktop_app/providers/settings_provider.dart';
-import 'package:my_desktop_app/services/method_channel_handler.dart';
-import 'package:my_desktop_app/services/settings_window_manager.dart';
+import 'package:wallet_image_processor/main.dart';
+import 'package:wallet_image_processor/providers/settings_provider.dart';
+import 'package:wallet_image_processor/services/method_channel_handler.dart';
+import 'package:wallet_image_processor/services/settings_window_manager.dart';
 
 import '../providers/images_provider.dart';
 import '../widgets/bottom_bar.dart';

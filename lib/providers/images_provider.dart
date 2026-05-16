@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_desktop_app/providers/settings_provider.dart';
+import 'package:wallet_image_processor/providers/settings_provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../models/image_item.dart';

@@ -1,7 +1,7 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
-import 'package:my_desktop_app/services/settings_window_manager.dart';
-import 'package:my_desktop_app/widgets/settings_panel.dart';
+import 'package:wallet_image_processor/services/settings_window_manager.dart';
+import 'package:wallet_image_processor/widgets/settings_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 

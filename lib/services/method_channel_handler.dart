@@ -1,8 +1,8 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_desktop_app/providers/images_provider.dart';
-import 'package:my_desktop_app/providers/settings_provider.dart';
-import 'package:my_desktop_app/services/settings_window_manager.dart';
+import 'package:wallet_image_processor/providers/images_provider.dart';
+import 'package:wallet_image_processor/providers/settings_provider.dart';
+import 'package:wallet_image_processor/services/settings_window_manager.dart';
 
 class MethodChannelHandler {
   static void init(ProviderContainer container) {

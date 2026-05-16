@@ -1,4 +1,4 @@
-# my_desktop_app
+# wallet_image_processor
 
 A new Flutter project.
 

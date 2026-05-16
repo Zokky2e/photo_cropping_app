@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_desktop_app/providers/images_provider.dart';
-import 'package:my_desktop_app/providers/settings_provider.dart';
-import 'package:my_desktop_app/screens/settings_screen.dart';
-import 'package:my_desktop_app/services/method_channel_handler.dart';
-import 'package:my_desktop_app/services/settings_window_manager.dart';
+import 'package:wallet_image_processor/providers/images_provider.dart';
+import 'package:wallet_image_processor/providers/settings_provider.dart';
+import 'package:wallet_image_processor/screens/settings_screen.dart';
+import 'package:wallet_image_processor/services/method_channel_handler.dart';
+import 'package:wallet_image_processor/services/settings_window_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +16,7 @@ import 'screens/home_screen.dart';
 
 late final ProviderContainer container;
 const String version = "v1.0.1";
+const String appName = "Wallet Image Processor";
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();

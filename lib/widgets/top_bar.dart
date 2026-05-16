@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:my_desktop_app/main.dart' show version;
-import 'package:my_desktop_app/services/settings_window_manager.dart';
-import 'package:my_desktop_app/widgets/windows_controls.dart';
+import 'package:wallet_image_processor/main.dart' show appName, version;
+import 'package:wallet_image_processor/services/settings_window_manager.dart';
+import 'package:wallet_image_processor/widgets/windows_controls.dart';
 import 'package:window_manager/window_manager.dart';
 
 class TopBar extends StatelessWidget {
@@ -65,7 +65,7 @@ class TopBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     const Text(
-                      'Wallet Padder',
+                      appName,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
