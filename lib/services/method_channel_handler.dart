@@ -24,8 +24,6 @@ class MethodChannelHandler {
                 outputQuality: data['outputQuality'],
                 processedPrefix: data['processedPrefix'],
               );
-
-          await container.read(imagesProvider.notifier).reprocessAll();
           break;
         case 'settings_hide':
           await SettingsWindow.hide();

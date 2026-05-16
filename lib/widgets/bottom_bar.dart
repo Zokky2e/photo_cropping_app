@@ -25,6 +25,12 @@ class BottomBar extends ConsumerWidget {
       child: Row(
         children: [
           // ── Stats ───────────────────────────────────────────────────
+          _ProcessButton(
+            hasImages: hasImages,
+            onProcess: notifier.processAll,
+            isProcessing: state.processingCount > 0,
+          ),
+          const SizedBox(width: 16),
           if (hasImages) ...[
             _Stat(
               label: 'Total',
@@ -93,6 +99,45 @@ class BottomBar extends ConsumerWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProcessButton extends StatelessWidget {
+  final bool hasImages;
+  final VoidCallback onProcess;
+  final bool isProcessing;
+
+  const _ProcessButton({
+    required this.hasImages,
+    required this.onProcess,
+    required this.isProcessing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final active = hasImages && !isProcessing;
+    return FilledButton.icon(
+      onPressed: active ? onProcess : null,
+      icon: isProcessing
+          ? const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : const Icon(Icons.play_arrow_rounded, size: 16),
+      label: Text(isProcessing ? 'Processing…' : 'Process'),
+      style: FilledButton.styleFrom(
+        backgroundColor: const Color(0xFF6BFF9F).withOpacity(0.15),
+        foregroundColor: const Color(0xFF6BFF9F),
+        disabledBackgroundColor: const Color(0xFF2A2A3A),
+        disabledForegroundColor: const Color(0xFF555566),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
       ),
     );
   }

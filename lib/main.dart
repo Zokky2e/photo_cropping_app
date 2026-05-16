@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wallet_image_processor/providers/images_provider.dart';
 import 'package:wallet_image_processor/providers/settings_provider.dart';
 import 'package:wallet_image_processor/screens/settings_screen.dart';
@@ -15,10 +16,11 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'screens/home_screen.dart';
 
 late final ProviderContainer container;
-const String version = "v1.0.1";
 const String appName = "Wallet Image Processor";
+late final String version;
 
 Future<void> main(List<String> args) async {
+  version = "v${(await PackageInfo.fromPlatform()).version}";
   WidgetsFlutterBinding.ensureInitialized();
   container = ProviderContainer();
   final windowController = await WindowController.fromCurrentEngine();

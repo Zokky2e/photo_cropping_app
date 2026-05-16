@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:wallet_image_processor/providers/settings_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -63,7 +64,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
     print("created images notifier");
   }
 
-  static const _supportedExtensions = {
+  static const supportedExtensions = {
     '.jpg',
     '.jpeg',
     '.png',
@@ -74,7 +75,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
   };
 
   bool _isImage(String path) =>
-      _supportedExtensions.contains(p.extension(path).toLowerCase());
+      supportedExtensions.contains(p.extension(path).toLowerCase());
 
   ProcessingSettings get _settings => _ref.read(settingsProvider);
 
@@ -92,11 +93,6 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
     if (newItems.isEmpty) return;
 
     state = state.copyWith(images: [...state.images, ...newItems]);
-
-    // Auto-process newly added images
-    for (final item in newItems) {
-      _processOne(item.sourcePath, null);
-    }
   }
 
   void removeImage(String sourcePath) {
@@ -153,15 +149,13 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
     _processOne(sourcePath, item.originalBytes);
   }
 
-  Future<void> reprocessAll() async {
+  Future<void> processAll() async {
     if (state.images.isEmpty) return;
-    state = state.copyWith(isReprocessing: true);
     await Future.wait(
       state.images.map(
         (item) => _processOne(item.sourcePath, item.originalBytes),
       ),
     );
-    state = state.copyWith(isReprocessing: false);
   }
 
   void _updateItem(String sourcePath, ImageItem Function(ImageItem) update) {
@@ -175,7 +169,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
   // ── Output folder ─────────────────────────────────────────────────────────
 
   Future<void> pickOutputFolder() async {
-    final folder = await FilePicker.platform.getDirectoryPath(
+    final folder = await FilePicker.getDirectoryPath(
       dialogTitle: 'Choose output folder',
     );
     if (folder != null) {

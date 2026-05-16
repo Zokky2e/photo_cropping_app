@@ -20,7 +20,7 @@ class TopBar extends StatelessWidget {
   }
 
   Future<void> _pickFiles() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.image,
       allowMultiple: true,
     );

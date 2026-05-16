@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
-import 'package:wallet_image_processor/providers/settings_provider.dart';
 import '../models/settings_model.dart';
 import '../models/process_result_model.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/settings_model.dart';
 
 class SettingsNotifier extends StateNotifier<ProcessingSettings> {

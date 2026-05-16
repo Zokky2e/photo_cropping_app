@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:wallet_image_processor/providers/images_provider.dart';
 
 class EmptyDropArea extends StatelessWidget {
   final void Function(List<String> paths) onFilesSelected;
@@ -7,7 +8,7 @@ class EmptyDropArea extends StatelessWidget {
   const EmptyDropArea({required this.onFilesSelected, super.key});
 
   Future<void> _pickFiles() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.image,
       allowMultiple: true,
     );
@@ -55,9 +56,9 @@ class EmptyDropArea extends StatelessWidget {
               style: TextStyle(color: Color(0xFF666677), fontSize: 13),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'JPG, PNG, BMP, WEBP, TIFF supported',
-              style: TextStyle(color: Color(0xFF444455), fontSize: 11),
+            Text(
+              '${ImagesNotifier.supportedExtensions.map((e) => e.replaceFirst('.', '').toUpperCase()).join(', ')} supported',
+              style: const TextStyle(color: Color(0xFF444455), fontSize: 11),
             ),
           ],
         ),

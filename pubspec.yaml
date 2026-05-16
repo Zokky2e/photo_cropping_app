@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.2
 
 environment:
     sdk: ^3.11.5
@@ -30,13 +30,13 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
-    desktop_drop: ^0.4.4
+    desktop_drop: ^0.7.1
     image: ^4.2.0 # Pure Dart image manipulation (resize, crop, filters, etc.)
     flutter_image_compress: ^2.2.0
     # The following adds the Cupertino Icons font to your application.
     # Use with the CupertinoIcons class for iOS style icons.
     cupertino_icons: ^1.0.8
-    file_picker: ^8.0.0 # "Open file" dialog
+    file_picker: ^12.0.0-beta.3 # "Open file" dialog
     path_provider: ^2.1.0 # Get system directories
     path: ^1.9.0 # Path manipulation utilities
     window_manager:
@@ -44,9 +44,10 @@ dependencies:
             url: https://github.com/boyan01/window_manager.git
             path: packages/window_manager
             ref: 6fae92d21b4c80ce1b8f71c1190d7970cf722bd4
-    flutter_riverpod: ^2.5.0
+    flutter_riverpod: ^3.3.1
     shared_preferences: ^2.2.3
     desktop_multi_window: ^0.3.0
+    package_info_plus: ^10.1.0
 
 dev_dependencies:
     flutter_test:
