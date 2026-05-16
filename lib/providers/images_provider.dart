@@ -107,7 +107,7 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
   // ── Process ──────────────────────────────────────────────────────────────
 
-  Future<void> _processOne(String sourcePath, dynamic existingBytes) async {
+  Future<void> _processOne(String sourcePath) async {
     _updateItem(
       sourcePath,
       (item) => item.copyWith(status: ProcessStatus.processing),
@@ -115,17 +115,14 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
 
     try {
       final settings = _settings;
-      final ProcessResult result;
-      if (existingBytes != null) {
-        result = await _processor.reprocessImage(existingBytes, settings);
-      } else {
-        result = await _processor.processImage(sourcePath, settings);
-      }
+      final ProcessResult result = await _processor.processImage(
+        sourcePath,
+        settings,
+      );
       _updateItem(
         sourcePath,
-        (item) => item.copyWith(
+        (ImageItem item) => item.copyWith(
           status: ProcessStatus.done,
-          originalBytes: result.originalBytes,
           processedBytes: result.bytes,
           originalWidth: result.originalWidth,
           originalHeight: result.originalHeight,
@@ -145,17 +142,33 @@ class ImagesNotifier extends StateNotifier<ImagesState> {
   }
 
   void retryImage(String sourcePath) {
-    final item = state.images.firstWhere((i) => i.sourcePath == sourcePath);
-    _processOne(sourcePath, item.originalBytes);
+    _processOne(sourcePath);
   }
 
   Future<void> processAll() async {
     if (state.images.isEmpty) return;
-    await Future.wait(
-      state.images.map(
-        (item) => _processOne(item.sourcePath, item.originalBytes),
-      ),
-    );
+
+    const concurrency = 3; // tune to taste; 2-4 is usually safe
+    final queue = state.images.map((item) => item.sourcePath).toList();
+
+    Future<void> worker() async {
+      while (true) {
+        String? path;
+        // grab next unprocessed item
+        if (queue.isEmpty) return;
+        path = queue.removeAt(0);
+
+        final item = state.images.firstWhere(
+          (i) => i.sourcePath == path,
+          orElse: () => throw StateError('missing'),
+        );
+        if (item.status == ProcessStatus.processing) continue;
+
+        await _processOne(path);
+      }
+    }
+
+    await Future.wait(List.generate(concurrency, (_) => worker()));
   }
 
   void _updateItem(String sourcePath, ImageItem Function(ImageItem) update) {

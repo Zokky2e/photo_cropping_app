@@ -14,13 +14,6 @@ class ImageProcessorService {
     return _runInIsolate(originalBytes, settings);
   }
 
-  Future<ProcessResult> reprocessImage(
-    Uint8List originalBytes,
-    ProcessingSettings settings,
-  ) async {
-    return _runInIsolate(originalBytes, settings);
-  }
-
   Future<ProcessResult> _runInIsolate(
     Uint8List originalBytes,
     ProcessingSettings settings,
