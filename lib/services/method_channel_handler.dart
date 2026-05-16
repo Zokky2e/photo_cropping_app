@@ -6,11 +6,12 @@ import 'package:my_desktop_app/services/settings_window_manager.dart';
 
 class MethodChannelHandler {
   static void init(ProviderContainer container) {
-    final channel = WindowMethodChannel('settings_channel');
+    final channel = WindowMethodChannel(
+      'settings_channel',
+      mode: ChannelMode.unidirectional,
+    );
     print("creating method handler");
     channel.setMethodCallHandler((call) async {
-      print(call.method);
-      print(call.arguments);
       switch (call.method) {
         case 'settings_updated':
           final data = call.arguments;
